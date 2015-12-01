@@ -12,6 +12,8 @@ namespace DungeonsOfDoom
         {
             Health = 100;
             Damage = 30;
+            X = 1;
+            Y = 1;
         }
 
         public int Health { get; set; }

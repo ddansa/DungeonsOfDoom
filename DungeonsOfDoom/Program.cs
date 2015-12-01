@@ -10,6 +10,7 @@ namespace DungeonsOfDoom
     {
         static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.GetEncoding(866);
             Game game = new Game();
             game.Start();
         }

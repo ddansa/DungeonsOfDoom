@@ -8,9 +8,8 @@ namespace DungeonsOfDoom
 {
     class Room
     {
-
+        public bool Wall { get; set; }
         public Monster RoomMonster { get; set; }
-
-        // item
+        public Item RoomItem { get; set; }
     }
 }
