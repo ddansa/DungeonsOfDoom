@@ -142,6 +142,7 @@ namespace DungeonsOfDoom
                 case ConsoleKey.UpArrow:
                     y--;
                     break;
+                default: return;
             }
 
             Room targetRoom = _rooms[x, y];
