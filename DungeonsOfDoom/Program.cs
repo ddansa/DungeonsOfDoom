@@ -10,7 +10,9 @@ namespace DungeonsOfDoom
     {
         static void Main(string[] args)
         {
-            Console.OutputEncoding = Encoding.GetEncoding(866);
+            // Sets console encoding to allow "box drawing"
+            // full character sheet: http://www.ascii.ca/cp850.htm
+            Console.OutputEncoding = Encoding.GetEncoding(850);
             Game game = new Game();
             game.Start();
         }

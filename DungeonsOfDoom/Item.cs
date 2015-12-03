@@ -18,7 +18,7 @@ namespace DungeonsOfDoom
 
         public string Name { get; set; }
 
-        // Types = "HealthPot", "Weapon"
+        // Implemented types = "HealthPot", "Weapon"
         public string Type { get; set; }
         public int Stat { get; set; }
     }
