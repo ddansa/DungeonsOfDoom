@@ -1,4 +1,5 @@
 ﻿using System;
+using DungeonsOfDoom.Classes;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -12,10 +13,12 @@ namespace DungeonsOfDoom
         const int MapWidth = 22;
         const int MapHeight = 12;
         readonly Room[,] _rooms = new Room[MapWidth, MapHeight];
-        readonly Player _player = new Player();
         readonly Random _rnd = new Random();
-
-
+        readonly Player _player;
+        public Game()
+        {
+            _player = new Player("Player", 100, 30, 0.5, 1, 1, _rnd);
+        }
         public void Start()
         {
             CreateMap();
@@ -48,27 +51,59 @@ namespace DungeonsOfDoom
                     // Checks if the current room is an "outer" cell and sets it to a wall
                     if (x == 0 || y == 0 || x == MapWidth - 1 || y == MapHeight - 1)
                     {
-                        room.Wall = true;
+                        room.IsWall = true;
+                        if (y == 0 && x == 0) { 
+                            room.Tile = "┌";
+                        }
+                        else if (y == 0 && x == MapWidth - 1) { 
+                            room.Tile = "┐";
+                        }
+                        else if (y == MapHeight - 1 && x == 0) { 
+                            room.Tile = "└";
+                        }
+                        else if (y == MapHeight - 1 && x == MapWidth - 1) { 
+                            room.Tile = "┘";
+                        }
+                        else if (y == 0 || y == MapHeight - 1) { 
+                            room.Tile = "─";
+                        }
+                        else if (x == 0 || x == MapWidth - 1) { 
+                            room.Tile = "│";
+                        }
                         // Skips the rest of the function
                         continue;
                     }
+                    if (x == MapWidth / 2 && y > 0 && y < MapHeight && y != MapHeight / 2)
+                    {
+                        room.IsWall = true;
+                        room.Tile = "│";
+                        continue;
+                    }
+
+                    room.Tile = "·";
 
                     if (_player.X != x && _player.Y != y)
                     {
                         // 15% chance to spawn a Monster
                         if (_rnd.Next(100) < 15)
                         {
-                            room.RoomMonster = new Monster("Mon", 35, 20);
+                            double rng = _rnd.NextDouble();
+                            if(rng <= 0.5)
+                                room.RoomMonster = new Goblin();
+                            else if(rng <= 0.9)
+                                room.RoomMonster = new Ogre();
+                            else
+                                room.RoomMonster = new Raider();
                         }
                         // 5% chance to spawn an Item
                         else if (_rnd.Next(100) < 5)
                         {
                             // 50% chance to spawn Health potion or Sword
-                            if (_rnd.Next(2) == 0)
+                            if (_rnd.NextDouble() <= 0.5)
                                 // Sword damage is random between 5 and 15
-                                room.RoomItem = new Item("Sword", "Weapon", _rnd.Next(5, 16));
+                                room.RoomItem = new Weapon("Sword", "W", _rnd.Next(5, 16));
                             else
-                                room.RoomItem = new Item("Health Potion", "HealthPot", 25);
+                                room.RoomItem = new HealthPot("Healing Potion", "H", 25);
                         }
                     }
                 }
@@ -79,6 +114,7 @@ namespace DungeonsOfDoom
         {
             Console.Write("Health: " + _player.Health);
             Console.Write(" Damage: " + _player.Damage);
+            Console.WriteLine(" Speed: " + _player.Speed);
             Console.WriteLine();
         }
 
@@ -91,40 +127,16 @@ namespace DungeonsOfDoom
                     Room room = _rooms[x, y];
 
                     if (_player.X == x && _player.Y == y)
-                        Console.Write("P");
+                        Console.Write(_player.Tile);
                     else if (room.RoomMonster != null)
-                        Console.Write("M");
+                        Console.Write(room.RoomMonster.Tile);
                     else if (room.RoomItem != null)
-                        Console.Write(room.RoomItem.Type[0]);
+                        Console.Write(room.RoomItem.Tile);
                     else
-                        MakeCell(x, y);
-
+                        Console.Write(room.Tile);
                 }
                 Console.WriteLine();
             }
-        }
-
-        private static void MakeCell(int x, int y)
-        {
-            string st;
-
-            // Draws a "wall" if the cell is on the outside
-            if (y == 0 && x == 0)
-                st = "┌";
-            else if (y == MapHeight - 1 && x == 0)
-                st = "└";
-            else if (y == MapHeight - 1 && x == MapWidth - 1)
-                st = "┘";
-            else if (y == 0 && x == MapWidth - 1)
-                st = "┐";
-            else if (y == 0 || y == MapHeight - 1)
-                st = "─";
-            else if (x == 0 || x == MapWidth - 1)
-                st = "│";
-            else
-                st = "·";
-
-            Console.Write(st);
         }
 
         private void WaitForCommand()
@@ -156,17 +168,15 @@ namespace DungeonsOfDoom
             Room targetRoom = _rooms[x, y];
 
             // exits function if the target room is a Wall (prevents movement etc.)
-            if (targetRoom.Wall)
+            if (targetRoom.IsWall)
                 return;
 
             if (targetRoom.RoomMonster != null)
             {
                 // basic combat function
-                Monster monster = targetRoom.RoomMonster;
-                _player.Health -= monster.Damage;
-                monster.Health -= _player.Damage;
+                _player.Fight(targetRoom.RoomMonster);
 
-                if (monster.Health <= 0)
+                if (targetRoom.RoomMonster.Health <= 0)
                 {
                     // removes the monster if it's "dead"
                     targetRoom.RoomMonster = null;
@@ -176,17 +186,10 @@ namespace DungeonsOfDoom
             if (targetRoom.RoomItem != null)
             {
                 // Picks up the item and adds the stats
-                switch (targetRoom.RoomItem.Type)
-                {
-                    case "Weapon":
-                        _player.Damage += targetRoom.RoomItem.Stat;
-                        break;
-                    case "HealthPot":
-                        _player.Health += targetRoom.RoomItem.Stat;
-                        break;
-                    default: break;
-                }
+                targetRoom.RoomItem.PickUp(_player);
                 // Removes the item after stats are added.
+                // TO-DO 
+                //  Backpack system
                 targetRoom.RoomItem = null;
             }
 

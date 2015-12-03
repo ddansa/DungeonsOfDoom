@@ -1,22 +1,24 @@
 ﻿using System;
+using DungeonsOfDoom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DungeonsOfDoom
+namespace DungeonsOfDoom.Classes
 {
-    class Monster
+    abstract class Being : GameObject
     {
-        public Monster(string name, int health, int damage)
+        public Being(string name, string tile, int health, int damage, double speed) : base(name, tile)
         {
-            Name = name;
             Health = health;
             Damage = damage;
+            Speed = speed;
         }
 
-        public string Name { get; set; }
+
         public int Health { get; set; }
         public int Damage { get; set; }
+        public double Speed { get; set; }
     }
 }
