@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DungeonsOfDoom.Classes
+namespace DungeonsOfDoom.Classes.Beings
 {
     class Player : Being
     {
@@ -32,7 +28,7 @@ namespace DungeonsOfDoom.Classes
             }
         }
 
-        private void FightRound(Being first, Being second)
+        private static void FightRound(Being first, Being second)
         {
             second.Health -= first.Damage;
             if (second.Health <= 0)

@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DungeonsOfDoom.Classes.Beings;
 
-namespace DungeonsOfDoom.Classes
+namespace DungeonsOfDoom.Classes.Items
 {
     abstract class Item : GameObject
     {
-        public Item(string name, string tile, int stat) : base(name, tile)
+        protected Item(string name, string tile, int stat) : base(name, tile)
         {
             Stat = stat;
         }

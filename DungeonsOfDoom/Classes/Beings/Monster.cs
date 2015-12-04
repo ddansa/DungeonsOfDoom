@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DungeonsOfDoom.Classes
+﻿namespace DungeonsOfDoom.Classes.Beings
 {
     abstract class Monster : Being
     {
-        public Monster(string name, string tile, int health, int damage, double speed) : base(name, tile, health, damage, speed)
+        protected Monster(string name, string tile, int health, int damage, double speed) : base(name, tile, health, damage, speed)
         {
         }
     }

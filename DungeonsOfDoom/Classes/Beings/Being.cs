@@ -1,15 +1,8 @@
-﻿using System;
-using DungeonsOfDoom;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DungeonsOfDoom.Classes
+﻿namespace DungeonsOfDoom.Classes.Beings
 {
     abstract class Being : GameObject
     {
-        public Being(string name, string tile, int health, int damage, double speed) : base(name, tile)
+        protected Being(string name, string tile, int health, int damage, double speed) : base(name, tile)
         {
             Health = health;
             Damage = damage;

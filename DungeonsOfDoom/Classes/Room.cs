@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DungeonsOfDoom.Classes.Beings;
+using DungeonsOfDoom.Classes.Items;
 
 namespace DungeonsOfDoom.Classes
 {
@@ -12,18 +14,5 @@ namespace DungeonsOfDoom.Classes
         public Item RoomItem { get; set; }
         public string Tile { get; set; }
         public bool IsWall { get; set; }
-
-        /*
-        public WallType Wall { get; set; }
-
-        public enum WallType
-        {
-            Horizontal,
-            Vertical,
-            TopLeftCorner,
-            TopRightCorner,
-            BotLeftCorner,
-            BotRightCorner
-        }*/
     }
 }

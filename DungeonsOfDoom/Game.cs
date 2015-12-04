@@ -5,20 +5,24 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DungeonsOfDoom.Classes.Beings;
+using DungeonsOfDoom.Classes.Items;
 
 namespace DungeonsOfDoom
 {
     class Game
     {
-        const int MapWidth = 22;
-        const int MapHeight = 12;
-        readonly Room[,] _rooms = new Room[MapWidth, MapHeight];
+        static int _mapWidth;
+        static int _mapHeight;
+        static Room[,] _rooms;
+        readonly char[] _walls = Properties.Resources.WallList.ToCharArray();
         readonly Random _rnd = new Random();
         readonly Player _player;
         public Game()
         {
             _player = new Player("Player", 100, 30, 0.5, 1, 1, _rnd);
         }
+
         public void Start()
         {
             CreateMap();
@@ -41,42 +45,25 @@ namespace DungeonsOfDoom
 
         private void CreateMap()
         {
-            for (int y = 0; y < MapHeight; y++)
+            string map = Properties.Resources._001b;
+            string[] mapRows = map.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+            _mapHeight = mapRows.Length;
+            _mapWidth = mapRows[0].Length;
+            _rooms = new Room[_mapWidth, _mapHeight];
+
+            for (int y = 0; y < mapRows.Length; y++)
             {
-                for (int x = 0; x < MapWidth; x++)
+                for (int x = 0; x < mapRows[y].Length; x++)
                 {
                     Room room = new Room();
                     _rooms[x, y] = room;
+                    char c = mapRows[y][x];
 
-                    // Checks if the current room is an "outer" cell and sets it to a wall
-                    if (x == 0 || y == 0 || x == MapWidth - 1 || y == MapHeight - 1)
+                    if (_walls.Contains(c))
                     {
                         room.IsWall = true;
-                        if (y == 0 && x == 0) { 
-                            room.Tile = "┌";
-                        }
-                        else if (y == 0 && x == MapWidth - 1) { 
-                            room.Tile = "┐";
-                        }
-                        else if (y == MapHeight - 1 && x == 0) { 
-                            room.Tile = "└";
-                        }
-                        else if (y == MapHeight - 1 && x == MapWidth - 1) { 
-                            room.Tile = "┘";
-                        }
-                        else if (y == 0 || y == MapHeight - 1) { 
-                            room.Tile = "─";
-                        }
-                        else if (x == 0 || x == MapWidth - 1) { 
-                            room.Tile = "│";
-                        }
-                        // Skips the rest of the function
-                        continue;
-                    }
-                    if (x == MapWidth / 2 && y > 0 && y < MapHeight && y != MapHeight / 2)
-                    {
-                        room.IsWall = true;
-                        room.Tile = "│";
+                        room.Tile = c.ToString();
                         continue;
                     }
 
@@ -88,9 +75,9 @@ namespace DungeonsOfDoom
                         if (_rnd.Next(100) < 15)
                         {
                             double rng = _rnd.NextDouble();
-                            if(rng <= 0.5)
+                            if (rng <= 0.5)
                                 room.RoomMonster = new Goblin();
-                            else if(rng <= 0.9)
+                            else if (rng <= 0.9)
                                 room.RoomMonster = new Ogre();
                             else
                                 room.RoomMonster = new Raider();
@@ -106,6 +93,7 @@ namespace DungeonsOfDoom
                                 room.RoomItem = new HealthPot("Healing Potion", "H", 25);
                         }
                     }
+
                 }
             }
         }
@@ -120,9 +108,9 @@ namespace DungeonsOfDoom
 
         private void DrawMap()
         {
-            for (int y = 0; y < MapHeight; y++)
+            for (int y = 0; y < _mapHeight; y++)
             {
-                for (int x = 0; x < MapWidth; x++)
+                for (int x = 0; x < _mapWidth; x++)
                 {
                     Room room = _rooms[x, y];
 

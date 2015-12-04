@@ -8,7 +8,7 @@ namespace DungeonsOfDoom.Classes
 {
     abstract class GameObject
     {
-        public GameObject(string name, string tile)
+        protected GameObject(string name, string tile)
         {
             Name = name;
             Tile = tile;
