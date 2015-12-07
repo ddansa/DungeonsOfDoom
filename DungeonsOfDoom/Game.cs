@@ -2,6 +2,7 @@
 using DungeonsOfDoom.Classes;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,12 +13,14 @@ namespace DungeonsOfDoom
 {
     class Game
     {
-        static int _mapWidth;
+        static int[] _mapWidth;
         static int _mapHeight;
         static Room[,] _rooms;
         readonly char[] _walls = Properties.Resources.WallList.ToCharArray();
         readonly Random _rnd = new Random();
         readonly Player _player;
+        readonly string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
         public Game()
         {
             _player = new Player("Player", 100, 30, 0.5, 1, 1, _rnd);
@@ -45,15 +48,18 @@ namespace DungeonsOfDoom
 
         private void CreateMap()
         {
-            string map = Properties.Resources._001b;
+            var files = Directory.GetFiles(_baseDirectory + "Maps", "*.txt")[2];
+
+            string map = File.ReadAllText(files);
             string[] mapRows = map.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             _mapHeight = mapRows.Length;
-            _mapWidth = mapRows[0].Length;
-            _rooms = new Room[_mapWidth, _mapHeight];
+            _mapWidth = new int[_mapHeight];
+            _rooms = new Room[mapRows[0].Length, _mapHeight];
 
             for (int y = 0; y < mapRows.Length; y++)
             {
+                _mapWidth[y] = mapRows[y].Length;
                 for (int x = 0; x < mapRows[y].Length; x++)
                 {
                     Room room = new Room();
@@ -110,7 +116,7 @@ namespace DungeonsOfDoom
         {
             for (int y = 0; y < _mapHeight; y++)
             {
-                for (int x = 0; x < _mapWidth; x++)
+                for (int x = 0; x < _mapWidth[y]; x++)
                 {
                     Room room = _rooms[x, y];
 

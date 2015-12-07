@@ -61,46 +61,6 @@ namespace DungeonsOfDoom.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ┌─────────┬──────────┐
-        ///│         │          │
-        ///│         │          │
-        ///│         │          │
-        ///│         │          │
-        ///│                    │
-        ///│         │          │
-        ///│         │          │
-        ///│         │          │
-        ///│         │          │
-        ///└─────────┴──────────┘
-        ///.
-        /// </summary>
-        internal static string _001 {
-            get {
-                return ResourceManager.GetString("_001", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ┌──────────┬──────────┐
-        ///│          │          │
-        ///│          │          │
-        ///│          │          │
-        ///│          │          │
-        ///├─────────   ─────────┤
-        ///│          │          │
-        ///│          │          │
-        ///│          │          │
-        ///│          │          │
-        ///└──────────┴──────────┘
-        ///.
-        /// </summary>
-        internal static string _001b {
-            get {
-                return ResourceManager.GetString("_001b", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to ┌
         ///┐
         ///└

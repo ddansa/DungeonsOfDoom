@@ -121,10 +121,4 @@
   <data name="WallList" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Maps\Reference\WallList.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="_001" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Maps\001.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="_001b" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Maps\001b.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
 </root>
