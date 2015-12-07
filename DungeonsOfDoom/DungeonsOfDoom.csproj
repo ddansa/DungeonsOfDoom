@@ -52,7 +52,7 @@
     <Compile Include="Classes\Items\Weapon.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Classes\Items\Item.cs" />
-    <Compile Include="Classes\Beings\Monster.cs" />
+    <Compile Include="Classes\Beings\Enemy.cs" />
     <Compile Include="Classes\Beings\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

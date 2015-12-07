@@ -10,7 +10,7 @@ namespace DungeonsOfDoom.Classes
 {
     class Room
     {
-        public Monster RoomMonster { get; set; }
+        public Enemy RoomMonster { get; set; }
         public Item RoomItem { get; set; }
         public string Tile { get; set; }
         public bool IsWall { get; set; }

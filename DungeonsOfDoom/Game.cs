@@ -18,7 +18,7 @@ namespace DungeonsOfDoom
         static Room[,] _rooms;
         readonly char[] _walls = Properties.Resources.WallList.ToCharArray();
         readonly Random _rnd = new Random();
-        readonly Player _player;
+        static Player _player;
         readonly string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
         public Game()
@@ -26,9 +26,63 @@ namespace DungeonsOfDoom
             _player = new Player("Player", 100, 30, 0.5, 1, 1, _rnd);
         }
 
+        public string Menu()
+        {
+            int mapCount = Directory.GetFiles(_baseDirectory + "Maps", "*.txt").Length;
+            string[] files = Directory.GetFiles(_baseDirectory + "Maps", "*.txt");
+            string map = "";
+            int menuPosition = 0;
+            bool selected = false;
+
+            do
+            {
+                Console.WriteLine("Select Map");
+                Console.WriteLine("Up/Down, Enter to select");
+                Console.WriteLine();
+                for (int i = 0; i < mapCount; i++)
+                {
+                    string mapName = Path.GetFileNameWithoutExtension(files[i]);
+                    if(menuPosition == i)
+                        Console.WriteLine("■ Map - " + mapName);
+                    else
+                        Console.WriteLine("Map - " + mapName);
+                }
+
+               
+                ConsoleKeyInfo input = Console.ReadKey(true);
+                switch (input.Key)
+                {
+                    case ConsoleKey.UpArrow:
+                        if (menuPosition > 0)
+                            menuPosition--;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (menuPosition < mapCount - 1)
+                            menuPosition++;
+                        break;
+                    case ConsoleKey.Enter:
+                        selected = true;
+                        break;
+                    default: break;
+                }
+
+                if (selected) {
+                    map = files[menuPosition];
+                    break;
+                }
+
+                Console.Clear();
+
+            } while (true);
+
+
+            Console.WriteLine(map);
+            return map;
+        }
+
         public void Start()
         {
-            CreateMap();
+            CreateMap(Menu());
             do
             {
                 UpdateMap();
@@ -36,7 +90,16 @@ namespace DungeonsOfDoom
             } while (_player.Health > 0);
 
             Console.WriteLine("You died..");
+            Console.WriteLine("Press any key to restart");
             Console.ReadKey();
+            Console.Clear();
+            Restart();
+        }
+
+        private void Restart()
+        {
+            _player = new Player("Player", 100, 30, 0.5, 1, 1, _rnd);
+            Start();
         }
 
         private void UpdateMap()
@@ -46,16 +109,24 @@ namespace DungeonsOfDoom
             DisplayPlayerInfo();
         }
 
-        private void CreateMap()
+        private void CreateMap(string file)
         {
-            var files = Directory.GetFiles(_baseDirectory + "Maps", "*.txt")[2];
 
-            string map = File.ReadAllText(files);
+            string map = File.ReadAllText(file);
             string[] mapRows = map.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             _mapHeight = mapRows.Length;
             _mapWidth = new int[_mapHeight];
-            _rooms = new Room[mapRows[0].Length, _mapHeight];
+
+            int maxWidth = mapRows[0].Length;
+
+            foreach (string row in mapRows)
+            {
+                if (row.Length > maxWidth)
+                    maxWidth = row.Length;
+            }
+
+            _rooms = new Room[maxWidth, _mapHeight];
 
             for (int y = 0; y < mapRows.Length; y++)
             {
@@ -65,6 +136,11 @@ namespace DungeonsOfDoom
                     Room room = new Room();
                     _rooms[x, y] = room;
                     char c = mapRows[y][x];
+
+                    if (c == "P"[0]) { 
+                        _player.X = x;
+                        _player.Y = y;
+                    }
 
                     if (_walls.Contains(c))
                     {
