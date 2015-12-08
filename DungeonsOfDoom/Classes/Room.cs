@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DungeonsOfDoom.Classes.Beings;
+﻿using DungeonsOfDoom.Classes.Beings;
 using DungeonsOfDoom.Classes.Items;
 
 namespace DungeonsOfDoom.Classes

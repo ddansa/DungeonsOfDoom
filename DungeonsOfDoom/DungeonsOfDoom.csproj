@@ -46,8 +46,10 @@
     <Compile Include="Classes\Beings\Being.cs" />
     <Compile Include="Classes\Beings\Ogre.cs" />
     <Compile Include="Classes\Beings\Goblin.cs" />
-    <Compile Include="Classes\Beings\Raider.cs" />
+    <Compile Include="Classes\Beings\Fox.cs" />
+    <Compile Include="Classes\LogEvent.cs" />
     <Compile Include="Classes\GameObject.cs" />
+    <Compile Include="Classes\Interfaces\IPickupAble.cs" />
     <Compile Include="Classes\Items\HealthPot.cs" />
     <Compile Include="Classes\Items\Weapon.cs" />
     <Compile Include="Game.cs" />
@@ -70,6 +72,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
