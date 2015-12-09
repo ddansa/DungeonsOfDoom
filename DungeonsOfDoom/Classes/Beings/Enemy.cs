@@ -5,5 +5,7 @@
         protected Enemy(string name, string tile, int health, int damage, double speed) : base(name, tile, health, damage, speed)
         {
         }
+
+        public abstract void PickUp(Player player);
     }
 }

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using DungeonsOfDoom.Classes.Beings;
+using DungeonsOfDoom.Classes.Interfaces;
 using DungeonsOfDoom.Classes.Items;
 
 namespace DungeonsOfDoom
@@ -20,7 +20,7 @@ namespace DungeonsOfDoom
         static int _mapHeight;
         static Room[,] _rooms;
         static Player _player;
-
+        readonly string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
         public Game()
         {
@@ -31,7 +31,7 @@ namespace DungeonsOfDoom
         {
             int mapCount = Directory.GetFiles(_baseDirectory + "Maps", "*.txt").Length;
             string[] files = Directory.GetFiles(_baseDirectory + "Maps", "*.txt");
-            string map = "";
+            string map;
             int menuPosition = 0;
             bool selected = false;
 
@@ -76,8 +76,6 @@ namespace DungeonsOfDoom
 
             } while (true);
 
-
-            Console.WriteLine(map);
             return map;
         }
 
@@ -100,14 +98,18 @@ namespace DungeonsOfDoom
         private void Restart()
         {
             _player = new Player("Player", 100, 30, 0.5, 1, 1, _rnd);
+            EventsList.Clear();
             Start();
         }
 
         private void UpdateMap()
         {
             Console.Clear();
+            Console.WriteLine("Press I/B to show Backpack, Press L to show full Log");
+            Console.WriteLine("Use Arrow keys to move");
             DrawMap();
             DisplayPlayerInfo();
+            DisplayLog();
         }
 
         private void CreateMap(string file)
@@ -121,11 +123,7 @@ namespace DungeonsOfDoom
 
             int maxWidth = 0;
 
-            foreach (string row in mapRows)
-            {
-                if (row.Length > maxWidth)
-                    maxWidth = row.Length;
-            }
+            maxWidth = mapRows.Select(row => row.Length).Concat(new[] {maxWidth}).Max();
 
             _rooms = new Room[maxWidth, _mapHeight];
 
@@ -160,10 +158,10 @@ namespace DungeonsOfDoom
                             double rng = _rnd.NextDouble();
                             if (rng <= 0.5)
                                 room.RoomMonster = new Goblin();
-                            else if (rng <= 0.9)
+                            else if (rng <= 0.7)
                                 room.RoomMonster = new Ogre();
                             else
-                                room.RoomMonster = new Raider();
+                                room.RoomMonster = new Fox();
                         }
                         // 5% chance to spawn an Item
                         else if (_rnd.Next(100) < 5)
@@ -181,12 +179,65 @@ namespace DungeonsOfDoom
             }
         }
 
+        private void DisplayFullLog()
+        {
+            if (EventsList.Count == 0)
+                return;
+            Console.Clear();
+            Console.WriteLine("Event Log");
+            Console.WriteLine("----------------");
+            foreach (var ev in EventsList.AsEnumerable().Reverse())
+            {
+                string time = ev.Time.ToString("HH:mm:ss");
+                Console.WriteLine("<" + time + "> " + ev.Text);
+            }
+            Console.SetWindowPosition(0,0);
+            //Console.SetCursorPosition(0,0);
+            Console.ReadKey();
+                    }
+
+        private void DisplayLog()
+        {
+            if (EventsList.Count == 0)
+                return;
+
+            Console.WriteLine("----------------");
+            int i = 0;
+            foreach (var ev in EventsList.AsEnumerable().Reverse())
+            {
+                if (i > 5)
+                    break;
+                string time = ev.Time.ToString("HH:mm:ss");
+                Console.WriteLine("<" + time + "> " + ev.Text);
+                i++;
+                }
+            Console.WriteLine("----------------");
+            }
+
+        public static void AddEvent(string text)
+        {
+            LogEvent e = new LogEvent(DateTime.Now, text);
+            EventsList.Add(e);
+        }
+
         private void DisplayPlayerInfo()
         {
             Console.Write("Health: " + _player.Health);
             Console.Write(" Damage: " + _player.Damage);
             Console.WriteLine(" Speed: " + _player.Speed);
             Console.WriteLine();
+        }
+
+        private void DisplayBackPack()
+        {
+            Console.Clear();
+            Console.WriteLine("Backpack Content");
+            Console.WriteLine("----------------");
+            foreach (IPickupAble item in _player.BackPack)
+            {
+                Console.WriteLine("- " + item.Name);
+            }
+            Console.ReadKey();
         }
 
         private void DrawMap()
@@ -212,7 +263,7 @@ namespace DungeonsOfDoom
 
         private void WaitForCommand()
         {
-            Console.WriteLine("Enter movement");
+            Console.WriteLine("Enter Command");
             ConsoleKeyInfo keyInfo = Console.ReadKey();
 
             int x = _player.X;
@@ -232,6 +283,13 @@ namespace DungeonsOfDoom
                 case ConsoleKey.UpArrow:
                     y--;
                     break;
+                case ConsoleKey.I:
+                case ConsoleKey.B:
+                    DisplayBackPack();
+                    return;
+                case ConsoleKey.L:
+                    DisplayFullLog();
+                    return;
                 // default: return exits the function if input is not an arrow key
                 default: return;
             }
@@ -250,6 +308,11 @@ namespace DungeonsOfDoom
                 if (targetRoom.RoomMonster.Health <= 0)
                 {
                     // removes the monster if it's "dead"
+                    IPickupAble test = targetRoom.RoomMonster as IPickupAble;
+                    if (test != null) { 
+                        targetRoom.RoomMonster.PickUp(_player);
+                        
+                    }
                     targetRoom.RoomMonster = null;
                 }
             }
@@ -259,8 +322,6 @@ namespace DungeonsOfDoom
                 // Picks up the item and adds the stats
                 targetRoom.RoomItem.PickUp(_player);
                 // Removes the item after stats are added.
-                // TO-DO 
-                //  Backpack system
                 targetRoom.RoomItem = null;
             }
 
