@@ -20,7 +20,7 @@ namespace DungeonsOfDoom
         static int _mapHeight;
         static Room[,] _rooms;
         static Player _player;
-        readonly string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        public static List<LogEvent> EventsList = new List<LogEvent>();
 
         public Game()
         {
@@ -43,13 +43,13 @@ namespace DungeonsOfDoom
                 for (int i = 0; i < mapCount; i++)
                 {
                     string mapName = Path.GetFileNameWithoutExtension(files[i]);
-                    if(menuPosition == i)
+                    if (menuPosition == i)
                         Console.WriteLine("■ Map - " + mapName);
                     else
                         Console.WriteLine("Map - " + mapName);
                 }
 
-               
+
                 ConsoleKeyInfo input = Console.ReadKey(true);
                 switch (input.Key)
                 {
@@ -67,7 +67,8 @@ namespace DungeonsOfDoom
                     default: break;
                 }
 
-                if (selected) {
+                if (selected)
+                {
                     map = files[menuPosition];
                     break;
                 }
@@ -121,9 +122,9 @@ namespace DungeonsOfDoom
             _mapHeight = mapRows.Length;
             _mapWidth = new int[_mapHeight];
 
-            int maxWidth = 0;
+            int maxWidth = mapRows[0].Length;
 
-            maxWidth = mapRows.Select(row => row.Length).Concat(new[] {maxWidth}).Max();
+            maxWidth = mapRows.Select(row => row.Length).Concat(new[] { maxWidth }).Max();
 
             _rooms = new Room[maxWidth, _mapHeight];
 
@@ -136,7 +137,8 @@ namespace DungeonsOfDoom
                     _rooms[x, y] = room;
                     char c = mapRows[y][x];
 
-                    if (c == "P"[0]) { 
+                    if (c == "P"[0])
+                    {
                         _player.X = x;
                         _player.Y = y;
                     }
@@ -191,10 +193,10 @@ namespace DungeonsOfDoom
                 string time = ev.Time.ToString("HH:mm:ss");
                 Console.WriteLine("<" + time + "> " + ev.Text);
             }
-            Console.SetWindowPosition(0,0);
+            Console.SetWindowPosition(0, 0);
             //Console.SetCursorPosition(0,0);
             Console.ReadKey();
-                    }
+        }
 
         private void DisplayLog()
         {
@@ -210,9 +212,9 @@ namespace DungeonsOfDoom
                 string time = ev.Time.ToString("HH:mm:ss");
                 Console.WriteLine("<" + time + "> " + ev.Text);
                 i++;
-                }
-            Console.WriteLine("----------------");
             }
+            Console.WriteLine("----------------");
+        }
 
         public static void AddEvent(string text)
         {
@@ -309,9 +311,10 @@ namespace DungeonsOfDoom
                 {
                     // removes the monster if it's "dead"
                     IPickupAble test = targetRoom.RoomMonster as IPickupAble;
-                    if (test != null) { 
+                    if (test != null)
+                    {
                         targetRoom.RoomMonster.PickUp(_player);
-                        
+
                     }
                     targetRoom.RoomMonster = null;
                 }
