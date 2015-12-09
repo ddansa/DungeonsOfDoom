@@ -6,8 +6,15 @@
         { 
         }
 
-        public override void PickUp(Player player)
+        public override void Attack(Being target)
         {
+            if (Game._rnd.NextDouble() <= .5)
+                base.Attack(target);
+            else { 
+                Game.AddEvent("The Ogre missed.. and hit himself");
+                base.Attack(this);
+            }
         }
+
     }
 }

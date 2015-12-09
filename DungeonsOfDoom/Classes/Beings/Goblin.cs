@@ -6,8 +6,5 @@
         {
         }
 
-        public override void PickUp(Player player)
-        {
-        }
     }
 }

@@ -11,7 +11,6 @@ namespace DungeonsOfDoom.Classes.Items
         {
             player.Damage += Stat;
             player.BackPack.Add(this);
-            Game.AddEvent("You picked up a " + Name);
         }
     }
 }

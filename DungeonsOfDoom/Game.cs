@@ -1,10 +1,10 @@
 ﻿using System;
-using DungeonsOfDoom.Classes;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DungeonsOfDoom.Classes;
 using DungeonsOfDoom.Classes.Beings;
 using DungeonsOfDoom.Classes.Interfaces;
 using DungeonsOfDoom.Classes.Items;
@@ -14,17 +14,19 @@ namespace DungeonsOfDoom
     class Game
     {
         readonly char[] _walls = Properties.Resources.WallList.ToCharArray();
-        readonly Random _rnd = new Random();
         readonly string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        public static List<LogEvent> EventsList = new List<LogEvent>();
+        public static Random _rnd = new Random();
         static int[] _mapWidth;
         static int _mapHeight;
         static Room[,] _rooms;
         static Player _player;
-        public static List<LogEvent> EventsList = new List<LogEvent>();
+        static BattleSystem _battle;
 
         public Game()
         {
-            _player = new Player("Player", 100, 30, 0.5, 1, 1, _rnd);
+            _player = new Player("Player", 100, 30, 0.5, 1, 1);
+            _battle = new BattleSystem();
         }
 
         public string Menu()
@@ -98,7 +100,7 @@ namespace DungeonsOfDoom
 
         private void Restart()
         {
-            _player = new Player("Player", 100, 30, 0.5, 1, 1, _rnd);
+            _player = new Player("Player", 100, 30, 0.5, 1, 1);
             EventsList.Clear();
             Start();
         }
@@ -240,6 +242,12 @@ namespace DungeonsOfDoom
             Console.WriteLine();
         }
 
+        private void AddToBackPack(IPickupAble item)
+        {
+            item.PickUp(_player);
+            AddEvent("You picked up a " + item.Name);
+        }
+
         private void DisplayBackPack()
         {
             Console.Clear();
@@ -315,28 +323,27 @@ namespace DungeonsOfDoom
 
             if (targetRoom.RoomMonster != null)
             {
-                // basic combat function
-                _player.Fight(targetRoom.RoomMonster);
+                // Initialize Battle round
+                _battle.Start(_player, targetRoom.RoomMonster);
 
                 if (targetRoom.RoomMonster.Health <= 0)
                 {
                     // Checks if the monster implements the IPickupAble interface
-                    IPickupAble testInterface = targetRoom.RoomMonster as IPickupAble;
-                    if (testInterface != null)
+                    if (targetRoom.RoomMonster is IPickupAble)
                     {
-                        // If the monster can be picked up, executes PickUp function
-                        targetRoom.RoomMonster.PickUp(_player);
+                        IPickupAble monster = (IPickupAble) targetRoom.RoomMonster;
+                        // If the monster can be picked up, adds to backpack
+                        AddToBackPack(monster);
                     }
-                    // removes the monster if it's dead
+                    // removes the monster
                     targetRoom.RoomMonster = null;
                 }
             }
 
+
             if (targetRoom.RoomItem != null)
             {
-                // Picks up the item and adds the stats
-                targetRoom.RoomItem.PickUp(_player);
-                // Removes the item after stats are added.
+                AddToBackPack(targetRoom.RoomItem);
                 targetRoom.RoomItem = null;
             }
 

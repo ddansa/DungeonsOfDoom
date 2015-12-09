@@ -10,7 +10,10 @@ namespace DungeonsOfDoom.Classes.Items
             Stat = stat;
         }
 
-        public abstract void PickUp(Player player);
+        public virtual void PickUp(Player player)
+        {
+            player.BackPack.Add(this);
+        }
 
         public int Stat { get; set; }
     }
