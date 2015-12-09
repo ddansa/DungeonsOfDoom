@@ -183,23 +183,29 @@ namespace DungeonsOfDoom
 
         private void DisplayFullLog()
         {
+            // Exit function if EventList is empty
             if (EventsList.Count == 0)
                 return;
+
             Console.Clear();
             Console.WriteLine("Event Log");
             Console.WriteLine("----------------");
             foreach (var ev in EventsList.AsEnumerable().Reverse())
             {
+                // Formats the DateTime to hours/minutes/seconds
                 string time = ev.Time.ToString("HH:mm:ss");
+                // Prints the event
                 Console.WriteLine("<" + time + "> " + ev.Text);
             }
+
+            // Scrolls to top
             Console.SetWindowPosition(0, 0);
-            //Console.SetCursorPosition(0,0);
             Console.ReadKey();
         }
 
         private void DisplayLog()
         {
+            // Exit function if EventList is empty
             if (EventsList.Count == 0)
                 return;
 
@@ -207,10 +213,14 @@ namespace DungeonsOfDoom
             int i = 0;
             foreach (var ev in EventsList.AsEnumerable().Reverse())
             {
+                // In the short log (while map is visible), only 5 event will display
                 if (i > 5)
                     break;
+                // Formats the DateTime to hours/minutes/seconds
                 string time = ev.Time.ToString("HH:mm:ss");
+                // Prints the event
                 Console.WriteLine("<" + time + "> " + ev.Text);
+                // Counter to limit Events in log
                 i++;
             }
             Console.WriteLine("----------------");
@@ -235,6 +245,7 @@ namespace DungeonsOfDoom
             Console.Clear();
             Console.WriteLine("Backpack Content");
             Console.WriteLine("----------------");
+            // Loops the content of BackPack and prints into console
             foreach (IPickupAble item in _player.BackPack)
             {
                 Console.WriteLine("- " + item.Name);
@@ -309,13 +320,14 @@ namespace DungeonsOfDoom
 
                 if (targetRoom.RoomMonster.Health <= 0)
                 {
-                    // removes the monster if it's "dead"
-                    IPickupAble test = targetRoom.RoomMonster as IPickupAble;
-                    if (test != null)
+                    // Checks if the monster implements the IPickupAble interface
+                    IPickupAble testInterface = targetRoom.RoomMonster as IPickupAble;
+                    if (testInterface != null)
                     {
+                        // If the monster can be picked up, executes PickUp function
                         targetRoom.RoomMonster.PickUp(_player);
-
                     }
+                    // removes the monster if it's dead
                     targetRoom.RoomMonster = null;
                 }
             }
