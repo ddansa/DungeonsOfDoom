@@ -13,13 +13,14 @@ namespace DungeonsOfDoom
 {
     class Game
     {
+        readonly char[] _walls = Properties.Resources.WallList.ToCharArray();
+        readonly Random _rnd = new Random();
+        readonly string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         static int[] _mapWidth;
         static int _mapHeight;
         static Room[,] _rooms;
-        readonly char[] _walls = Properties.Resources.WallList.ToCharArray();
-        readonly Random _rnd = new Random();
         static Player _player;
-        readonly string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
 
         public Game()
         {
@@ -118,7 +119,7 @@ namespace DungeonsOfDoom
             _mapHeight = mapRows.Length;
             _mapWidth = new int[_mapHeight];
 
-            int maxWidth = mapRows[0].Length;
+            int maxWidth = 0;
 
             foreach (string row in mapRows)
             {
