@@ -15,8 +15,9 @@ namespace DungeonsOfDoom
     {
         readonly char[] _walls = Properties.Resources.WallList.ToCharArray();
         readonly string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        public static List<LogEvent> EventsList = new List<LogEvent>();
-        public static Random _rnd = new Random();
+        public static List<GameEvent> EventsList = new List<GameEvent>();
+        public static Random Rnd = new Random();
+        public static EventLog GameEvents = new EventLog();
         static int[] _mapWidth;
         static int _mapHeight;
         static Room[,] _rooms;
@@ -112,7 +113,7 @@ namespace DungeonsOfDoom
             Console.WriteLine("Use Arrow keys to move");
             DrawMap();
             DisplayPlayerInfo();
-            DisplayLog();
+            GameEvents.DisplayEventLog(true, 5);
         }
 
         private void CreateMap(string file)
@@ -157,9 +158,9 @@ namespace DungeonsOfDoom
                     if (_player.X != x && _player.Y != y)
                     {
                         // 15% chance to spawn a Monster
-                        if (_rnd.Next(100) < 15)
+                        if (Rnd.Next(100) < 15)
                         {
-                            double rng = _rnd.NextDouble();
+                            double rng = Rnd.NextDouble();
                             if (rng <= 0.5)
                                 room.RoomMonster = new Goblin();
                             else if (rng <= 0.7)
@@ -168,12 +169,12 @@ namespace DungeonsOfDoom
                                 room.RoomMonster = new Fox();
                         }
                         // 5% chance to spawn an Item
-                        else if (_rnd.Next(100) < 5)
+                        else if (Rnd.Next(100) < 5)
                         {
                             // 50% chance to spawn Health potion or Sword
-                            if (_rnd.NextDouble() <= 0.5)
+                            if (Rnd.NextDouble() <= 0.5)
                                 // Sword damage is random between 5 and 15
-                                room.RoomItem = new Weapon("Sword", "W", _rnd.Next(5, 16));
+                                room.RoomItem = new Weapon("Sword", "W", Rnd.Next(5, 16));
                             else
                                 room.RoomItem = new HealthPot("Healing Potion", "H", 25);
                         }
@@ -181,57 +182,6 @@ namespace DungeonsOfDoom
 
                 }
             }
-        }
-
-        private void DisplayFullLog()
-        {
-            // Exit function if EventList is empty
-            if (EventsList.Count == 0)
-                return;
-
-            Console.Clear();
-            Console.WriteLine("Event Log");
-            Console.WriteLine("----------------");
-            foreach (var ev in EventsList.AsEnumerable().Reverse())
-            {
-                // Formats the DateTime to hours/minutes/seconds
-                string time = ev.Time.ToString("HH:mm:ss");
-                // Prints the event
-                Console.WriteLine("<" + time + "> " + ev.Text);
-            }
-
-            // Scrolls to top
-            Console.SetWindowPosition(0, 0);
-            Console.ReadKey();
-        }
-
-        private void DisplayLog()
-        {
-            // Exit function if EventList is empty
-            if (EventsList.Count == 0)
-                return;
-
-            Console.WriteLine("----------------");
-            int i = 0;
-            foreach (var ev in EventsList.AsEnumerable().Reverse())
-            {
-                // In the short log (while map is visible), only 5 event will display
-                if (i > 5)
-                    break;
-                // Formats the DateTime to hours/minutes/seconds
-                string time = ev.Time.ToString("HH:mm:ss");
-                // Prints the event
-                Console.WriteLine("<" + time + "> " + ev.Text);
-                // Counter to limit Events in log
-                i++;
-            }
-            Console.WriteLine("----------------");
-        }
-
-        public static void AddEvent(string text)
-        {
-            LogEvent e = new LogEvent(DateTime.Now, text);
-            EventsList.Add(e);
         }
 
         private void DisplayPlayerInfo()
@@ -242,24 +192,7 @@ namespace DungeonsOfDoom
             Console.WriteLine();
         }
 
-        private void AddToBackPack(IPickupAble item)
-        {
-            item.PickUp(_player);
-            AddEvent("You picked up a " + item.Name);
-        }
 
-        private void DisplayBackPack()
-        {
-            Console.Clear();
-            Console.WriteLine("Backpack Content");
-            Console.WriteLine("----------------");
-            // Loops the content of BackPack and prints into console
-            foreach (IPickupAble item in _player.BackPack)
-            {
-                Console.WriteLine("- " + item.Name);
-            }
-            Console.ReadKey();
-        }
 
         private void DrawMap()
         {
@@ -306,10 +239,10 @@ namespace DungeonsOfDoom
                     break;
                 case ConsoleKey.I:
                 case ConsoleKey.B:
-                    DisplayBackPack();
+                    _player.BackPack.DisplayBackPack();
                     return;
                 case ConsoleKey.L:
-                    DisplayFullLog();
+                    GameEvents.DisplayEventLog(pauseAfterPrint:true);
                     return;
                 // default: return exits the function if input is not an arrow key
                 default: return;
@@ -333,7 +266,7 @@ namespace DungeonsOfDoom
                     {
                         IPickupAble monster = (IPickupAble) targetRoom.RoomMonster;
                         // If the monster can be picked up, adds to backpack
-                        AddToBackPack(monster);
+                        _player.BackPack.Add(monster);
                     }
                     // removes the monster
                     targetRoom.RoomMonster = null;
@@ -343,7 +276,7 @@ namespace DungeonsOfDoom
 
             if (targetRoom.RoomItem != null)
             {
-                AddToBackPack(targetRoom.RoomItem);
+                _player.BackPack.Add(targetRoom.RoomItem);
                 targetRoom.RoomItem = null;
             }
 

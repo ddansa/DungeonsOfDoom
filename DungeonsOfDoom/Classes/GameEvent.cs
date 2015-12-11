@@ -1,9 +1,9 @@
 ﻿using System;
 namespace DungeonsOfDoom.Classes
 {
-    class LogEvent
+    class GameEvent
     {
-        public LogEvent(DateTime time, string text)
+        public GameEvent(DateTime time, string text)
         {
             Time = time;
             Text = text;

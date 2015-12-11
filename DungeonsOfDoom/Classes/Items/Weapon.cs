@@ -10,7 +10,6 @@ namespace DungeonsOfDoom.Classes.Items
         public override void PickUp(Player player)
         {
             player.Damage += Stat;
-            player.BackPack.Add(this);
         }
     }
 }

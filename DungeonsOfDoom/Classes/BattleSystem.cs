@@ -12,7 +12,7 @@ namespace DungeonsOfDoom.Classes
     {
         public BattleSystem()
         {
-            Rng = Game._rnd;
+            Rng = Game.Rnd;
         }
 
 

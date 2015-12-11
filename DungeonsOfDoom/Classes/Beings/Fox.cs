@@ -11,7 +11,6 @@ namespace DungeonsOfDoom.Classes.Beings
         public void PickUp(Player player)
         {
             Name += " Skin";
-            player.BackPack.Add(this);
         }
     }
 }

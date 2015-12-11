@@ -44,12 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Inventory.cs" />
     <Compile Include="Classes\BattleSystem.cs" />
     <Compile Include="Classes\Beings\Being.cs" />
     <Compile Include="Classes\Beings\Ogre.cs" />
     <Compile Include="Classes\Beings\Goblin.cs" />
     <Compile Include="Classes\Beings\Fox.cs" />
-    <Compile Include="Classes\LogEvent.cs" />
+    <Compile Include="Classes\EventLog.cs" />
+    <Compile Include="Classes\GameEvent.cs" />
     <Compile Include="Classes\GameObject.cs" />
     <Compile Include="Classes\Interfaces\IPickupAble.cs" />
     <Compile Include="Classes\Items\HealthPot.cs" />

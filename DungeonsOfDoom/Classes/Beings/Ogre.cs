@@ -8,10 +8,10 @@
 
         public override void Attack(Being target)
         {
-            if (Game._rnd.NextDouble() <= .5)
+            if (Game.Rnd.NextDouble() <= .5)
                 base.Attack(target);
-            else { 
-                Game.AddEvent("The Ogre missed.. and hit himself");
+            else {
+                Game.GameEvents.AddEvent("The Ogre missed.. and hit himself");
                 base.Attack(this);
             }
         }

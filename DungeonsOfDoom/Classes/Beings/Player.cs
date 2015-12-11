@@ -10,12 +10,11 @@ namespace DungeonsOfDoom.Classes.Beings
         {
             X = posX;
             Y = posY;
-            BackPack = new List<IPickupAble>();
+            BackPack = new Inventory(this);
         }
-        
 
         public int X { get; set; }
         public int Y { get; set; }
-        public List<IPickupAble> BackPack { get; set; }
+        public Inventory BackPack { get; set; }
     }
 }
